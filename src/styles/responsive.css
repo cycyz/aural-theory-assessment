@@ -1,0 +1,85 @@
+/* ═══════════════════════════════════════
+   移动端响应式样式
+   针对 ≤768px 平板竖屏 和 ≤480px 手机
+   ═══════════════════════════════════════ */
+
+/* 全局容器 */
+@media (max-width: 480px) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* 卡片内边距收紧 */
+  [style*="maxWidth: 480"],
+  [style*="maxWidth: 560"] {
+    padding-left: var(--space-sm) !important;
+    padding-right: var(--space-sm) !important;
+  }
+
+  /* 五线谱 SVG 自适应缩放 */
+  .notation-display svg,
+  [class*="Notation"] svg,
+  div[style*="background: #fafaf8"] svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* 选项按钮触控优化 */
+  button[style*="width: 100%"] {
+    min-height: 48px;
+    padding: 16px 12px !important;
+    font-size: var(--font-md) !important;
+  }
+
+  /* 选项圆形编号 */
+  button[style*="width: 100%"] span[style*="borderRadius: 50%"] {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: var(--font-sm) !important;
+  }
+
+  /* 确认/下一题按钮 */
+  button[style*="padding: 16px 32px"],
+  button[style*="padding: 12px 24px"] {
+    width: 100%;
+    min-height: 52px;
+    font-size: var(--font-lg) !important;
+  }
+
+  /* 音频播放按钮 */
+  button[style*="borderRadius: var(--radius-full)"] {
+    min-height: 48px;
+  }
+}
+
+/* 平板竖屏 */
+@media (min-width: 481px) and (max-width: 768px) {
+  button[style*="width: 100%"] {
+    min-height: 44px;
+  }
+
+  button[style*="padding: 16px 32px"],
+  button[style*="padding: 12px 24px"] {
+    min-height: 48px;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  header, footer, button {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  [style*="background: linear-gradient"] {
+    background: #fff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
