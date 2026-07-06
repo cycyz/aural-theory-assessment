@@ -51,8 +51,65 @@
   - `GITEE_USERNAME` = 你的 Gitee 用户名
   - `GITEE_REPO` = 仓库名（如 `aural-theory-assessment`）
 
-### 3. 本仓库已包含工作流
-- 文件：`.github/workflows/deploy-gitee.yml`
+### 3. 添加自动同步工作流
+> 说明：因部署环境的 GitHub 令牌权限限制，工作流文件未能自动提交。请按下方「手动创建」或「令牌刷新」二选一启用自动同步。
+
+**方式一：在 GitHub 网页手动创建（推荐，无需本地操作）**
+1. 进入 GitHub 仓库 → 顶部「Add file」→「Create new file」。
+2. 文件名填：`.github/workflows/deploy-gitee.yml`
+3. 内容粘贴下方完整 YAML，点「Commit changes」。
+
+**方式二：刷新本地 gh 令牌后推送**
+在你的本地终端运行 `gh auth refresh -s workflow`，授权后告诉我，我再把工作流文件推送上去。
+
+**工作流完整内容（deploy-gitee.yml）：**
+
+```yaml
+name: Deploy to Gitee Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Push dist to Gitee (gitee-pages branch)
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+          GITEE_REPO: ${{ secrets.GITEE_REPO }}
+        run: |
+          set -e
+          cd dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push -f "https://${GITEE_USERNAME}:${GITEE_TOKEN}@gitee.com/${GITEE_USERNAME}/${GITEE_REPO}.git" HEAD:gitee-pages
+```
+
 - 首次使用：在 Gitee 新建空仓库 → 开启 Gitee Pages，部署分支选 `gitee-pages`、目录 `/`。
 - 之后每次 `git push` 到 `main`，Actions 自动构建并推送到 `gitee-pages` 分支。
 
